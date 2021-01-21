@@ -103,7 +103,7 @@ module.exports = function(passport, user) {
       }
     ));
 
-    passport.use(new CookieStrategy(
+   /* passport.use(new CookieStrategy(
       function(token, done) {
         User.findByToken({ token: token }, function(err, user) {
           if (err) { return done(err); }
@@ -122,5 +122,5 @@ module.exports = function(passport, user) {
           if (!user) { return done(null, false); }
           return done(null, user);
         });
-      }))
+      }))*/
 }
