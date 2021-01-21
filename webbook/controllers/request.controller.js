@@ -404,7 +404,6 @@ function numberTotalReq(req, res) {
         }
     });
 }
-
 function numberTotalPerDateReq2019(req, res) {
     const dateinf = "2018-12-31";
     const datesup = "2020-01-01";

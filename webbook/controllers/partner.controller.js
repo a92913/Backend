@@ -4,6 +4,7 @@ const jsonMessages = require(jsonMessagesPath + "bd");
 
 
 
+
 //read partnerss
 function readPartner(req, res) {
     const query = connect.con.query('SELECT num_partner, name, cc, phone_num, adress, donation, registration_date, date_bith mail, id_station FROM partner WHERE checkout_date is NULL order by num_partner ', function(err, rows, fields) {

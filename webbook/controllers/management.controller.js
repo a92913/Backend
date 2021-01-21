@@ -2,6 +2,9 @@ const connect = require('../config/connectMYSQL');
 const jsonMessagesPath = __dirname + "/../assets/jsonMessages/";
 const jsonMessages = require(jsonMessagesPath + "bd");
 
+var LocalStorage = require('node-localstorage').LocalStorage;
+let localStorage = new LocalStorage('./scratch');
+
 //ler os membros da direção
 function readManagement(req, res) {
     const query = connect.con.query('SELECT id_management, name, cc, date_birth, phone_number, adress, id_login FROM management order by id_management ', function(err, rows, fields) {
@@ -68,53 +71,28 @@ function updateManagement(req, res) {
             });
         }
         else
-        res.status(jsonMessages.db.requiredData.status).send(jsonMessages.db.requiredData);
+            res.status(jsonMessages.db.requiredData.status).send(jsonMessages.db.requiredData);
     }
 }
 
 function saveManagement(req, res) {
-    const email = req.sanitize('email').escape();
-    const password = req.sanitize('password').escape();
-    const profile = req.sanitize('profile').escape();
-
     const idManagement = req.sanitize('id_management').escape();
     const nameManagement = req.sanitize('name').escape();
     const birthDate = req.sanitize('date_birth').escape();
     const ccManagement = req.sanitize('cc').escape();
     const phoneNumberManagement = req.sanitize('phone_number').escape();
     const adressManagement = req.sanitize('adress').escape();
-    const loginManagement = req.sanitize('id_login').escape();
 
-    let post1 = [
-        loginManagement, email, password, profile
+
+    let post = [
+        idManagement, nameManagement, birthDate, ccManagement, phoneNumberManagement, adressManagement, localStorage.getItem("idlogin")
     ];
-    let query = "";
-    console.log(post1);
-    query = connect.con.query('INSERT INTO login (id_login, email, password, profile) values (?,?,?,?);', post1,
+    
+    const query = connect.con.query('insert into management (id_management, name, date_birth, cc, phone_number, adress, id_login) VALUES (?,?,?,?,?,?,?)', post,
         function(err, rows, fields) {
             console.log(query.sql);
             if (!err) {
-
                 res.status(jsonMessages.db.successInsert.status).send(jsonMessages.db.successInsert);
-                console.log(rows.insertId);
-                let post2 = [
-                        idManagement, nameManagement, birthDate, ccManagement, phoneNumberManagement, adressManagement, rows.insertId
-                    ],
-                    query = connect.con.query('insert into management (id_management, name, date_birth, cc, phone_number, adress, id_login) VALUES (?,?,?,?,?,?,?)', post2,
-                        function(err, rows, fields) {
-                            console.log(query.sql);
-                            if (!err) {
-                                res.status(jsonMessages.db.successInsert.status).send(jsonMessages.db.successInsert);
-                            }
-                            else {
-                                console.log(err);
-                                if (err.code == "ER_DUP_ENTRY") {
-                                    res.status(jsonMessages.db.duplicateData.status).send(jsonMessages.db.duplicateData);
-                                }
-                                else
-                                    res.status(jsonMessages.db.dbError.status).send(jsonMessages.db.dbError);
-                            }
-                        });
             }
             else {
                 console.log(err);
@@ -126,6 +104,8 @@ function saveManagement(req, res) {
             }
         });
 }
+
+
 
 function deleteManagement(req, res) {
     const idManagement = req.param('id');
@@ -144,7 +124,7 @@ function deleteManagement(req, res) {
 function readManagementPhone(req, res) {
     const phone_number = req.param('phone');
     const post = { phone_number: phone_number };
-    const query = connect.con.query('SELECT phone_number FROM management WHERE ?',post, function(err, rows, fields) {
+    const query = connect.con.query('SELECT phone_number FROM management WHERE ?', post, function(err, rows, fields) {
         console.log(query.sql);
         if (err) {
             console.log(err);
@@ -164,7 +144,7 @@ function readManagementPhone(req, res) {
 function readManagementCc(req, res) {
     const cc = req.param('cc');
     const post = { cc: cc };
-    const query = connect.con.query('SELECT cc FROM management WHERE ?',post, function(err, rows, fields) {
+    const query = connect.con.query('SELECT cc FROM management WHERE ?', post, function(err, rows, fields) {
         console.log(query.sql);
         if (err) {
             console.log(err);
@@ -207,7 +187,7 @@ function updatePassword(req, res) {
             });
         }
         else
-        res.status(jsonMessages.db.requiredData.status).send(jsonMessages.db.requiredData);
+            res.status(jsonMessages.db.requiredData.status).send(jsonMessages.db.requiredData);
     }
 }
 
@@ -215,9 +195,9 @@ module.exports = {
     readManagement: readManagement,
     readManagementID: readManagementID,
     updateManagement: updateManagement,
-    saveManagement:saveManagement,
-    deleteManagement:deleteManagement,
-    readManagementPhone:readManagementPhone,
-    readManagementCc:readManagementCc,
-    updatePassword:updatePassword,
+    saveManagement: saveManagement,
+    deleteManagement: deleteManagement,
+    readManagementPhone: readManagementPhone,
+    readManagementCc: readManagementCc,
+    updatePassword: updatePassword,
 };

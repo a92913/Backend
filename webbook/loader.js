@@ -1,5 +1,5 @@
 const app = require('./server');
-//const router = require("./routes/main.route.js");
+//const router = require("./routes/main.route");
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const session = require('express-session');
@@ -43,6 +43,12 @@ app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 require('./routes/auth.js')(app, passport);
 require('./config/passport/passport.js')(passport, models.user);
+
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+require('./routes/auth.js')(app, passport);
+require('./config/passport/passport.js')(passport, models.user);
+
 //Sync Database
 models.sequelize.sync().then(function() {
   console.log('Nice! Database looks fine');
@@ -51,6 +57,21 @@ models.sequelize.sync().then(function() {
   console.log(err, "Something went wrong with the Database Update!");
 });
 
-
-//app.use('/', router);
+//app.use('/', router); 
 module.exports = app;
+
+require("./routes/main.route.js");
+require("./controllers/partner.controller.js");
+require("./controllers/operational.controller.js");
+require("./controllers/request.controller.js");
+require("./controllers/occurrence.controller.js");
+require("./controllers/centralist.controller.js");
+require("./controllers/management.controller.js");
+require("./controllers/help_request.controller.js");
+require("./controllers/login.controller.js");
+require("./controllers/mail.controller.js");
+require("./controllers/user.controller.js");
+require("./controllers/auth.controller.js");
+require("./routes/auth.js");
+
+

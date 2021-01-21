@@ -1,5 +1,14 @@
 module.exports = {
     user: {
+        sucess: {
+            msg:"Sucess login",
+            message: {
+                eng: "You login successfully!",
+                pt: "Realizaste login com sucesso!"
+            },
+            status: 200,
+            sucess: true
+        },
         duplicate: {
             msg: "DuplicateValues",
             message: {
@@ -46,7 +55,7 @@ module.exports = {
             status: 400,
             success: false
         },
-        signinSucces: {
+        signinSuccess: {
             msg: "Success",
             message: {
                 eng: "Login with sucess",

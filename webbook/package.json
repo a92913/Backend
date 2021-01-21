@@ -20,9 +20,10 @@
     "express-session": "^1.17.1",
     "express-validator": "^5.3.1",
     "mysql": "^2.18.1",
-    "nodemailer": "^4.6.5",
+    "nodemailer": "^4.7.0",
     "nodemailer-smtp-transport": "^2.7.4",
     "passport": "^0.4.1",
+    "passport-cookie": "^1.0.9",
     "passport-local": "^1.0.0",
     "sequelize": "^3.35.1"
   }

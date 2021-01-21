@@ -2,6 +2,9 @@ const connect = require('../config/connectMYSQL');
 const jsonMessagesPath = __dirname + "/../assets/jsonMessages/";
 const jsonMessages = require(jsonMessagesPath + "bd");
 
+var LocalStorage = require('node-localstorage').LocalStorage;
+let localStorage = LocalStorage('./scratch');
+
 //read operationals
 function readOperational(req, res) {
     const query = connect.con.query('SELECT id_operational, name, cc, phone_number, adress, pay_per_hour, birth_date, entry_date, operational_type, speciality, id_login FROM operational order by id_operational ', function(err, rows, fields) {
@@ -130,9 +133,6 @@ function deleteOperational(req, res) {
 }
 
 function saveOperational(req, res) {
-    const email = req.sanitize('email').escape();
-    const password = req.sanitize('password').escape();
-    const profile = req.sanitize('profile').escape();
 
     const idOperational = req.sanitize('id_operational').escape();
     const nameOperational = req.sanitize('name').escape();
@@ -144,36 +144,16 @@ function saveOperational(req, res) {
     const paymentOperational = req.sanitize('pay_per_hour').escape();
     const operationalType = req.sanitize('operational_type').escape();
     const specialityOperational = req.sanitize('speciality').escape();
-    const loginOperational = req.sanitize('id_login').escape();
 
-    let post1 = [ loginOperational, email, password, profile ];
-    let query = "";
-    console.log(post1);
-    query = connect.con.query('INSERT INTO login (id_login, email, password, profile) values (?,?,?,?);', post1,
+
+    let post = [
+        idOperational, nameOperational, birthDate, adressOperational, entryDate, ccOperational, phoneNumberOperational, paymentOperational, operationalType, specialityOperational, localStorage.getItem("idlogin")
+    ];
+    const query = connect.con.query('insert into operational (id_operational, name, birth_date, adress, entry_date, cc, phone_number, pay_per_hour, operational_type, speciality, id_login) VALUES (?,?,?,?,?,?,?,?,?,?,?)', post,
         function(err, rows, fields) {
             console.log(query.sql);
             if (!err) {
-
                 res.status(jsonMessages.db.successInsert.status).send(jsonMessages.db.successInsert);
-                console.log(rows.insertId);
-                let post2 = [
-                        idOperational, nameOperational, birthDate, adressOperational, entryDate, ccOperational, phoneNumberOperational, paymentOperational, operationalType, specialityOperational, rows.insertId
-                    ],
-                    query = connect.con.query('insert into operational (id_operational, name, birth_date, adress, entry_date, cc, phone_number, pay_per_hour, operational_type, speciality, id_login) VALUES (?,?,?,?,?,?,?,?,?,?,?)', post2,
-                        function(err, rows, fields) {
-                            console.log(query.sql);
-                            if (!err) {
-                                res.status(jsonMessages.db.successInsert.status).send(jsonMessages.db.successInsert);
-                            }
-                            else {
-                                console.log(err);
-                                if (err.code == "ER_DUP_ENTRY") {
-                                    res.status(jsonMessages.db.duplicateData.status).send(jsonMessages.db.duplicateData);
-                                }
-                                else
-                                    res.status(jsonMessages.db.dbError.status).send(jsonMessages.db.dbError);
-                            }
-                        });
             }
             else {
                 console.log(err);
@@ -223,7 +203,7 @@ function updateOperational(req, res) {
 function readOperationalPhone(req, res) {
     const phone_number = req.param('phone');
     const post = { phone_number: phone_number };
-    const query = connect.con.query('SELECT phone_number FROM operational WHERE ?',post, function(err, rows, fields) {
+    const query = connect.con.query('SELECT phone_number FROM operational WHERE ?', post, function(err, rows, fields) {
         console.log(query.sql);
         if (err) {
             console.log(err);
@@ -243,7 +223,7 @@ function readOperationalPhone(req, res) {
 function readOperationalCc(req, res) {
     const cc = req.param('cc');
     const post = { cc: cc };
-    const query = connect.con.query('SELECT cc FROM operational WHERE ?',post, function(err, rows, fields) {
+    const query = connect.con.query('SELECT cc FROM operational WHERE ?', post, function(err, rows, fields) {
         console.log(query.sql);
         if (err) {
             console.log(err);
@@ -278,6 +258,25 @@ function numberOperationals(req, res) {
     });
 }
 
+function numberTotalPerDate(req, res) {
+    const date = req.param("date");
+    const post = [date];
+    const query = connect.con.query('SELECT COUNT(*) FROM operational WHERE entry_date <?', post, function(err, rows, fields) {
+        console.log(query.sql);
+        if (err) {
+            console.log(err);
+            res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.dbError);
+        }
+        else {
+            if (rows.length == 0) {
+                res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.noRecords);
+            }
+            else {
+                res.send(rows);
+            }
+        }
+    });
+}
 
 module.exports = {
     saveOperational: saveOperational,
@@ -285,7 +284,8 @@ module.exports = {
     readOperational: readOperational,
     deleteOperational: deleteOperational,
     updateOperational: updateOperational,
-    readOperationalPhone:readOperationalPhone,
+    readOperationalPhone: readOperationalPhone,
     readOperationalCc: readOperationalCc,
-    numberOperationals:numberOperationals,
+    numberOperationals: numberOperationals,
+    numberTotalPerDate: numberTotalPerDate,
 };

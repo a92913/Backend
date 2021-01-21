@@ -7,6 +7,8 @@ const controllerCentralist = require('../controllers/centralist.controller.js');
 const controllerManagement = require('../controllers/management.controller.js');
 const controllerHelpRequest = require('../controllers/help_request.controller.js');
 const controllerLogin = require('../controllers/login.controller.js');
+const controllerUser = require('../controllers/user.controller.js');
+const controllerMail = require('../controllers/mail.controller.js');
 const jsonMessages = __dirname + "/../assets/jsonMessages/";
 
 const app = require('../server');
@@ -34,6 +36,7 @@ app.put('/operationals/:id', controllerOperational.updateOperational);
 app.get('/operationalsPhone/:phone', controllerOperational.readOperationalPhone);
 app.get('/operationalsCc/:cc', controllerOperational.readOperationalCc);
 app.get('/numberOperationals/', controllerOperational.numberOperationals);
+app.get('/numberPerDateOperationals/:date', controllerOperational.numberTotalPerDate);
 
 //occurence routes
 app.get('/occurrences/:id', controllerOccurrence.readOccurrenceID);
@@ -64,12 +67,14 @@ app.get('/numberTotalPerDateReq2021/:content', controllerRequest.numberTotalPerD
 //centralist routes
 app.get('/centralists/', controllerCentralist.readCentralist);
 app.get('/centralists/:id', controllerCentralist.readCentralistID);
+app.get('/centralistslogin/:id', controllerCentralist.readCentralistIDLogin);
 app.post('/centralists/', controllerCentralist.saveCentralist);
 app.delete('/centralists/:id', controllerCentralist.deleteCentralist);
 app.put('/centralists/:id', controllerCentralist.updateCentralist);
 app.get('/centralistsPhone/:phone', controllerCentralist.readCentralistPhone);
 app.get('/centralistsCc/:cc', controllerCentralist.readCentralistCc);
 app.get('/numberCentralist/', controllerCentralist.numberCentralist);
+app.get('/numberPerDateCentralist/:date', controllerCentralist.numberTotalPerDate);
 
 //rotas da direção
 app.get('/managements/', controllerManagement.readManagement);
@@ -93,7 +98,19 @@ app.put('/login/:id', controllerLogin.updateLogin);
 app.put('/updatePassword/:id', controllerLogin.updatePassword);
 app.delete('/login/:id', controllerLogin.deleteLogin);
 
+//rotas user
+app.get('/usersEmail/:email', controllerUser.readEmail);
+app.get('/users/:id', controllerUser.readUserID);
+app.put('/users/:id', controllerUser.updateUser);
+app.put('/uesersupdatePassword/:id', controllerUser.updatePassword);
+app.delete('/users/:id', controllerUser.deleteUser);
+
+//para enviar o email
+app.post('/emails', controllerMail.sendMail);
+app.post('/emails2', controllerMail.sendMail2);
+
 module.exports = app;
+
 
 
 //funçao para o login

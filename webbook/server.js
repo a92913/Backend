@@ -3,42 +3,58 @@ const port = process.env.PORT || 8080;
 const express = require('express');
 const app = express();
 
+app.use('/assets', express.static('assets'));
+app.use('/views', express.static('views'));
+
 //carregar bibliotecas globais
 const cors = require("cors");
 app.use(cors());
 app.use(cors({
-  exposedHeaders: ['Location'],
+    exposedHeaders: ['Location'],
 }));
 
-app.use('/assets', express.static('assets'));
-app.use('/views', express.static('views'));
-
-/*
-// For Passport
-app.use(session({ secret: 'keyboard cat',resave: true, saveUninitialized:true})); // session secret
- 
-app.use(passport.initialize());
- 
-app.use(passport.session()); // persistent login sessions
-*/
-
-app.listen(port, function(err){
-    if(!err){
+app.listen(port, function(err) {
+    if (!err) {
         console.log('Your app is listening on ' + host + ' and port ' + port);
     }
-    else{
+    else {
         console.log(err);
     }
 });
 
 module.exports = app;
 require('./loader.js');
-require("./routes/main.route.js");
-require("./controllers/partner.controller.js");
-require("./controllers/operational.controller.js");
-require("./controllers/request.controller.js");
-require("./controllers/occurrence.controller.js");
-require("./controllers/centralist.controller.js");
-require("./controllers/management.controller.js");
-require("./controllers/help_request.controller.js");
-require("./controllers/login.controller.js");
+
+//cookies
+var cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
+//basic route for homepage 
+app.get('/', (req, res) => {
+    res.send('welcome');
+});
+
+//JSON object to be added to cookie 
+let users = {
+    name: "Ritik",
+    Age: "18"
+}
+
+//Route for adding cookie 
+app.get('/setuser', (req, res) => {
+    res.cookie("userData", users);
+    res.send('user data added to cookie');
+});
+
+//Iterate users data from cookie 
+app.get('/getuser', (req, res) => {
+    //shows all the cookies 
+    res.send(req.cookies);
+});
+
+//Route for destroying cookie 
+app.get('/logout', (req, res) => {
+    //it will clear the userData cookie 
+    res.clearCookie('userData');
+    res.send('user logout successfully');
+});
