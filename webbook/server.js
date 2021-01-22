@@ -34,6 +34,9 @@ app.get('/', (req, res) => {
     res.send('welcome');
 });
 
+
+
+
 //JSON object to be added to cookie 
 let users = {
     name: "Ritik",
@@ -42,7 +45,8 @@ let users = {
 
 //Route for adding cookie 
 app.get('/setuser', (req, res) => {
-    res.cookie("userData", users);
+    res.cookie("cookie", users);
+    console.log(users)
     res.send('user data added to cookie');
 });
 
@@ -50,11 +54,12 @@ app.get('/setuser', (req, res) => {
 app.get('/getuser', (req, res) => {
     //shows all the cookies 
     res.send(req.cookies);
+    console.log(req.cookies);
 });
 
 //Route for destroying cookie 
 app.get('/logout', (req, res) => {
     //it will clear the userData cookie 
-    res.clearCookie('userData');
+    res.clearCookie('auth');
     res.send('user logout successfully');
 });
