@@ -8,7 +8,7 @@ let localStorage = LocalStorage('././scratch');
 module.exports = function(passport, user) {
   var User = user;
   var LocalStrategy = require('passport-local').Strategy;
-  var CookieStrategy = require('passport-cookie').Strategy;
+ // var CookieStrategy = require('passport-cookie').Strategy;
   passport.serializeUser(function(user, done) {
     done(null, user.id);
   });
@@ -90,34 +90,14 @@ module.exports = function(passport, user) {
         }
         var userinfo = user.get();
 
-        console.log(userinfo.profile);
+        console.log(userinfo);
         return done(null, userinfo);
+
       }).catch(function(err) {
         console.log("Error:", err);
         return done(null, false, jsonMessages.user.error);
       });
     }
   ));
-
-  passport.use(new CookieStrategy(
-    function(token, done) {
-      User.findByToken({ token: token }, function(err, user) {
-        if (err) { return done(err); }
-        if (!user) { return done(null, false); }
-        return done(null, user);
-      });
-    }
-  ));
-  passport.use(new CookieStrategy({
-    cookieName: 'auth',
-    signed: true,
-    passReqToCallback: true
-  }, function(req, token, done) {
-    User.findByToken({ token: token }, function(err, user) {
-      if (err) { return done(err); }
-      if (!user) { return done(null, false); }
-      return done(null, user);
-    });
-  }))
 
 }
