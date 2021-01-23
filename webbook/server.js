@@ -27,19 +27,6 @@ app.listen(port, function(err) {
     }
 });
 
-module.exports = app;
-require('./loader.js');
-
-//cookies
-var cookieParser = require('cookie-parser');
-app.use(cookieParser());
-
-//basic route for homepage 
-app.get('/', (req, res) => {
-    res.send('welcome');
-});
-
-
 const multer = require('multer');
 const path = require('path');
 
@@ -78,4 +65,22 @@ app.post('/upload', upload.single('image'), (req, res, next) => {
         console.error(error);
     }
 });
-//
+
+
+
+
+
+
+
+
+module.exports = app;
+require('./loader.js');
+
+//cookies
+var cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
+//basic route for homepage 
+app.get('/', (req, res) => {
+    res.send('welcome');
+});
