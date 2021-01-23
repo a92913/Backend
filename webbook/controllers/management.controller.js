@@ -45,13 +45,35 @@ function readManagementID(req, res) {
     });
 }
 
+function readManagementIDLogin(req, res) {
+    const idlogin = req.param('id');
+    const post = { id_login: idlogin };
+    const query = connect.con.query('SELECT id_login, name, date_birth, cc, phone_number, adress, id_management FROM management where ? ', post, function(err, rows, fields) {
+        console.log(query.sql);
+        if (err) {
+            console.log(err);
+            res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.dbError);
+        }
+        else {
+            if (rows.length == 0) {
+                res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.noRecords);
+            }
+            else {
+                res.send(rows);
+            }
+        }
+    });
+}
+
+
+
 //alterar dados dos diretores
 function updateManagement(req, res) {
     const idManagement = req.param('id');
     const adressManagement = req.sanitize('adress').escape();
     const phoneNumberManagement = req.sanitize('phone_number').escape();
     //checks
-    req.checkBody("phone_num", "Insira um contacto válido.").isMobilePhone('pt-PT');
+    //req.checkBody("phone_num", "Insira um contacto válido.").isMobilePhone('pt-PT');
     const errors = req.validationErrors();
     if (errors) {
         res.send(errors);
@@ -197,7 +219,7 @@ function updatePassword(req, res) {
 }
 
 //alterar foto de perfil
-function updateAvatar(req, res) {
+/*function updateAvatar(req, res) {
 const idOperational = req.sanitize('id_operational').escape();
 const avatar = localStorage.getItem("foto");
 console.log(avatar);
@@ -223,11 +245,12 @@ console.log(avatar);
         else
             res.status(jsonMessages.db.requiredData.status).send(jsonMessages.db.requiredData);
     }
-}
+}*/
 
 module.exports = {
     readManagement: readManagement,
     readManagementID: readManagementID,
+    readManagementIDLogin:readManagementIDLogin,
     updateManagement: updateManagement,
     saveManagement: saveManagement,
     deleteManagement: deleteManagement,

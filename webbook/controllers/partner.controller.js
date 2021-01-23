@@ -118,9 +118,9 @@ function updatePartner(req, res) {
     const donationPartner = req.sanitize('donation').escape();
     const mail = req.sanitize('mail').escape();
     const errors = req.validationErrors();
-    req.checkBody("phone_num", "Insira um contacto válido.").isMobilePhone('pt-PT');
-    req.checkBody("donation", "Insira apenas números.").isNumeric();
-    req.checkBody("mail", "Insira um email válido.").isEmail();
+    req.check("phone_num", "Insira um contacto válido.").isMobilePhone('pt-PT');
+    req.check("donation", "Insira apenas números.").isNumeric();
+    req.check("mail", "Insira um email válido.").isEmail();
     if (errors) {
         res.send(errors);
         return;

@@ -49,7 +49,7 @@ function readUserID(req, res) {
 function updateUser(req, res) {
     const id = req.sanitize('id').escape();
     const email = req.sanitize('email').escape();
-    
+
     req.checkBody("email", "Insira um email válido.").isEmail();
 
     const errors = req.validationErrors();
@@ -94,50 +94,49 @@ function deleteUser(req, res) {
 }
 
 //alterar pass
-function alt (password) {
-        console.log(password);
+function alt(password) {
+    console.log(password);
 
-        return bCrypt.hashSync(password, bCrypt.genSaltSync(8), null);
+    return bCrypt.hashSync(password, bCrypt.genSaltSync(8), null);
+}
+
+function updatePassword(req, res) {
+    const id = req.sanitize('id').escape();
+    const password = req.sanitize('password').escape();
+    const errors = req.validationErrors();
+
+
+    var userPassword = alt(password);
+    if (errors) {
+        res.send(errors);
+        console.log(errors);
+        return;
     }
-
-
-    function updatePassword(req, res) {
-        const id = req.sanitize('id').escape();
-        const password = req.sanitize('password').escape();
-        const errors = req.validationErrors();
-
-
-        var userPassword = alt(password);
-        if (errors) {
-            res.send(errors);
-            console.log(errors);
-            return;
+    else {
+        if (id != "NULL" && typeof(id) != 'undefined' && typeof(password) != 'undefined') {
+            const update = [userPassword, id];
+            console.log(update);
+            const query = connect.con.query('UPDATE users SET password =? WHERE id=?', update, function(err, rows, fields) {
+                console.log(query.sql);
+                if (!err) {
+                    res.status(jsonMessages.db.successUpdate.status).send(jsonMessages.db.successUpdate);
+                }
+                else {
+                    console.log(err);
+                    res.status(jsonMessages.db.successUpdate.status).send(jsonMessages.db.successUpdate);
+                }
+            });
         }
-        else {
-            if (id != "NULL" && typeof(id) != 'undefined' && typeof(password) != 'undefined') {
-                const update = [userPassword, id];
-                console.log(update);
-                const query = connect.con.query('UPDATE users SET password =? WHERE id=?', update, function(err, rows, fields) {
-                    console.log(query.sql);
-                    if (!err) {
-                        res.status(jsonMessages.db.successUpdate.status).send(jsonMessages.db.successUpdate);
-                    }
-                    else {
-                        console.log(err);
-                        res.status(jsonMessages.db.successUpdate.status).send(jsonMessages.db.successUpdate);
-                    }
-                });
-            }
-            else
-                res.status(jsonMessages.db.requiredData.status).send(jsonMessages.db.requiredData);
-        }
+        else
+            res.status(jsonMessages.db.requiredData.status).send(jsonMessages.db.requiredData);
     }
+}
 
 
-    module.exports = {
-        readEmail: readEmail,
-        readUserID: readUserID,
-        updateUser: updateUser,
-        deleteUser: deleteUser,
-        updatePassword: updatePassword,
-    };
+module.exports = {
+    readEmail: readEmail,
+    readUserID: readUserID,
+    updateUser: updateUser,
+    deleteUser: deleteUser,
+    updatePassword: updatePassword,
+};

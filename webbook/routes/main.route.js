@@ -80,6 +80,7 @@ app.get('/numberPerDateCentralist/:date', controllerCentralist.numberTotalPerDat
 //rotas da direção
 app.get('/managements/', controllerManagement.readManagement);
 app.get('/managements/:id', controllerManagement.readManagementID);
+app.get('/managementslogin/:id', controllerManagement.readManagementIDLogin);
 app.put('/managements/:id', controllerManagement.updateManagement);
 app.post('/managements/', controllerManagement.saveManagement);
 app.delete('/managements/:id', controllerManagement.deleteManagement);
