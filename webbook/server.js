@@ -78,3 +78,4 @@ app.post('/upload', upload.single('image'), (req, res, next) => {
         console.error(error);
     }
 });
+//
