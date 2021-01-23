@@ -89,7 +89,7 @@ module.exports = function(passport, user) {
           return done(null, false, jsonMessages.user.password);
         }
         var userinfo = user.get();
-
+        
         console.log(userinfo);
         return done(null, userinfo);
 

@@ -37,6 +37,7 @@ app.get('/operationalsPhone/:phone', controllerOperational.readOperationalPhone)
 app.get('/operationalsCc/:cc', controllerOperational.readOperationalCc);
 app.get('/numberOperationals/', controllerOperational.numberOperationals);
 app.get('/numberPerDateOperationals/:date', controllerOperational.numberTotalPerDate);
+app.put('/operationalsAvatar/:id_operational', controllerOperational.updateAvatar);
 
 //occurence routes
 app.get('/occurrences/:id', controllerOccurrence.readOccurrenceID);

@@ -5,9 +5,11 @@ const jsonMessages = require(jsonMessagesPath + "bd");
 var LocalStorage = require('node-localstorage').LocalStorage;
 let localStorage = LocalStorage('./scratch');
 
+
+
 //read operationals
 function readOperational(req, res) {
-    const query = connect.con.query('SELECT id_operational, name, cc, phone_number, adress, pay_per_hour, birth_date, entry_date, operational_type, speciality, id_login FROM operational order by id_operational ', function(err, rows, fields) {
+    const query = connect.con.query('SELECT id_operational, name, cc, phone_number, adress, pay_per_hour, birth_date, entry_date, operational_type, speciality, id FROM operational order by id_operational ', function(err, rows, fields) {
         console.log(query.sql);
         if (err) {
             console.log(err);
@@ -28,7 +30,7 @@ function readOperational(req, res) {
 function readOperationalID(req, res) {
     const idOperational = req.param('id');
     const post = { id_operational: idOperational };
-    const query = connect.con.query('SELECT id_operational, name, birth_date, adress, entry_date, cc, phone_number, pay_per_hour, operational_type, speciality, id_login FROM operational where ? ', post, function(err, rows, fields) {
+    const query = connect.con.query('SELECT id_operational, name, birth_date, adress, entry_date, cc, phone_number, pay_per_hour, operational_type, speciality, id FROM operational where ? ', post, function(err, rows, fields) {
         console.log(query.sql);
         if (err) {
             console.log(err);
@@ -149,7 +151,7 @@ function saveOperational(req, res) {
     let post = [
         idOperational, nameOperational, birthDate, adressOperational, entryDate, ccOperational, phoneNumberOperational, paymentOperational, operationalType, specialityOperational, localStorage.getItem("idlogin")
     ];
-    const query = connect.con.query('insert into operational (id_operational, name, birth_date, adress, entry_date, cc, phone_number, pay_per_hour, operational_type, speciality, id_login) VALUES (?,?,?,?,?,?,?,?,?,?,?)', post,
+    const query = connect.con.query('insert into operational (id_operational, name, birth_date, adress, entry_date, cc, phone_number, pay_per_hour, operational_type, speciality, id) VALUES (?,?,?,?,?,?,?,?,?,?,?)', post,
         function(err, rows, fields) {
             console.log(query.sql);
             if (!err) {
@@ -278,6 +280,35 @@ function numberTotalPerDate(req, res) {
     });
 }
 
+function updateAvatar(req, res) {
+const idOperational = req.sanitize('id_operational').escape();
+const avatar = localStorage.getItem("foto");
+
+console.log(avatar);
+    const errors = req.validationErrors();
+    if (errors) {
+        res.send(errors);
+        return;
+    }
+    else {
+        if (idOperational != "NULL" && typeof(idOperational) != 'undefined') {
+            const update = [localStorage.getItem("foto"), idOperational];
+            const query = connect.con.query('UPDATE operational SET avatar=? WHERE id_operational=?', update, function(err, rows, fields) {
+                console.log(query.sql);
+                if (!err) {
+                    res.status(jsonMessages.db.successUpdate.status).send(jsonMessages.db.successUpdate);
+                }
+                else {
+                    console.log(err);
+                    res.status(jsonMessages.db.dbError.status).send(jsonMessages.db.dbError);
+                }
+            });
+        }
+        else
+            res.status(jsonMessages.db.requiredData.status).send(jsonMessages.db.requiredData);
+    }
+}
+
 module.exports = {
     saveOperational: saveOperational,
     readOperationalID: readOperationalID,
@@ -288,4 +319,5 @@ module.exports = {
     readOperationalCc: readOperationalCc,
     numberOperationals: numberOperationals,
     numberTotalPerDate: numberTotalPerDate,
+    updateAvatar:updateAvatar,
 };

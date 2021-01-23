@@ -16,10 +16,11 @@ module.exports = function(app, passport) {
         successRedirect: '/signinSuccess',
         failureRedirect: '/signin'
     }));
-    app.get("/profile", passport.authenticate("cookie", { session: false }),
+    app.get("/profile", passport.authenticate("cookie", {
         function(req, res) {
             res.json(req.user);
-        });
+        }
+        }));
     //para verificar se o utilizador está autenticado
     function isLoggedIn(req, res, next) {
         if (req.isAuthenticated())

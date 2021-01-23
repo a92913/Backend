@@ -3,8 +3,13 @@ const port = process.env.PORT || 8080;
 const express = require('express');
 const app = express();
 
+
+
 app.use('/assets', express.static('assets'));
 app.use('/views', express.static('views'));
+
+var LocalStorage = require('node-localstorage').LocalStorage;
+let localStorage = LocalStorage('./scratch');
 
 //carregar bibliotecas globais
 const cors = require("cors");
@@ -35,31 +40,41 @@ app.get('/', (req, res) => {
 });
 
 
+const multer = require('multer');
+const path = require('path');
 
 
-//JSON object to be added to cookie 
-let users = {
-    name: "Ritik",
-    Age: "18"
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads');
+    },
+    filename: (req, file, cb) => {
+        console.log(file);
+        let name = Date.now() + path.extname(file.originalname);
+        cb(null, name);
+        let nameUpload = "../Backend/webbook/uploads/" + name;
+        localStorage.setItem("foto", nameUpload);
+        console.log(nameUpload)
+    }
+});
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype == 'image/jpeg' || file.mimetype == 'image/png') {
+        cb(null, true);
+    }
+    else {
+        cb(null, false);
+    }
 }
+const upload = multer({ storage: storage, fileFilter: fileFilter });
 
-//Route for adding cookie 
-app.get('/setuser', (req, res) => {
-    res.cookie("cookie", users);
-    console.log(users)
-    res.send('user data added to cookie');
-});
-
-//Iterate users data from cookie 
-app.get('/getuser', (req, res) => {
-    //shows all the cookies 
-    res.send(req.cookies);
-    console.log(req.cookies);
-});
-
-//Route for destroying cookie 
-app.get('/logout', (req, res) => {
-    //it will clear the userData cookie 
-    res.clearCookie('auth');
-    res.send('user logout successfully');
+//Upload route
+app.post('/upload', upload.single('image'), (req, res, next) => {
+    try {
+        return res.status(201).json({
+            message: 'File uploded successfully'
+        });
+    }
+    catch (error) {
+        console.error(error);
+    }
 });
