@@ -21,24 +21,8 @@ function readRequest(req, res) {
     });
 }
 
+//ler pedidos por id
 function readRequestID(req, res) {
-    /*   const idRequest = req.param('id');
-       const post = { id_request: idRequest };
-       const query = connect.con.query('SELECT r.id_request, r.content, r.adress, r.mail, r.name, r.date, r.phone_number, r.verifycation, r.verifycation_date, r.hour, rt.typology, rt.difficulty_level FROM request r, request_type rt WHERE r.id_request = rt.id_request  ', post, function(err, rows, fields) {
-           console.log(query.sql);
-           if (err) {
-               console.log(err);
-               res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.dbError);
-           }
-           else {
-               if (rows.length == 0) {
-                   res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.noRecords);
-               }
-               else {
-                   res.send(rows);
-               }
-           }
-       });*/
     const idRequest = req.param('id');
     const post = { id_request: idRequest };
     const query = connect.con.query('SELECT id_request, content, description, adress, mail, name, date, phone_number, verification_date, hour FROM request where ? ', post, function(err, rows, fields) {
@@ -59,6 +43,7 @@ function readRequestID(req, res) {
     });
 }
 
+//ler pedidos por tipo de ajuda
 function readRequestTypeID(req, res) {
     const idRequest = req.param('id');
     const post = { id_request: idRequest };
@@ -80,7 +65,7 @@ function readRequestTypeID(req, res) {
     });
 }
 
-
+//adicionar pedidos
 function saveRequest(req, res) {
 
     //receber os dados do formulário que são enviados por post
@@ -102,6 +87,9 @@ function saveRequest(req, res) {
     req.checkBody("date").notEmpty;
     req.checkBody("content").notEmpty;
     req.checkBody("name").notEmpty;
+    
+    req.checkBody("phone_num", "Insira um contacto válido.").isMobilePhone('pt-PT');
+    req.checkBody("name", "Insira apenas texto.").matches(/^[a-z ]+$/i);
 
     const errors = req.validationErrors();
     if (errors) {
@@ -141,43 +129,8 @@ function saveRequest(req, res) {
     });
 }
 
+//adicionar pedidos 
 function saveRequestType(req, res) {
-
-    //receber os dados do formulário que são enviados por post
-    /*   const idRequest = req.sanitize('id_request').escape();
-       const typology = req.sanitize('typology').escape();
-       const difficulty_level = req.sanitize('difficulty_level').escape();
-
-       const errors = req.validationErrors();
-       if (errors) {
-           res.send(errors);
-           return;
-       }
-       
-       const post = {
-           id_request:idRequest,
-           typology: typology,
-           difficulty_level: difficulty_level
-       }
-
-       //criar e executar a query de gravação na BD para inserir os dados presentes no post
-       const query = connect.con.query('INSERT INTO request_type SET ?', post, function(err, rows, fields) {
-           console.log(query.sql);
-           if (!err) {
-               res.status(jsonMessages.db.successInsert.status).send(jsonMessages.db.successInsert);
-               localStorage.setItem("idreq3", rows.insertId);
-               console.log(localStorage.idreq3)
-           }
-           else {
-               console.log(err);
-               if (err.code == "ER_DUP_ENTRY") {
-                   res.status(jsonMessages.db.duplicateData.status).send(jsonMessages.db.duplicateData);
-               }
-               else
-                   res.status(jsonMessages.db.dbError.status).send(jsonMessages.db.dbError);
-           }
-       });*/
-
     const idRequest = req.sanitize('id_request').escape();
     const content = req.sanitize('content').escape();
     const description = req.sanitize('description').escape();
@@ -189,10 +142,12 @@ function saveRequestType(req, res) {
     const verification = req.sanitize('verification').escape();
     const verification_date = req.sanitize('verification_date').escape();
     const hour = req.sanitize('hour').escape();
-
     const typology = req.sanitize('typology').escape();
     const difficulty_level = req.sanitize('difficulty_level').escape();
-
+    
+    req.checkBody("mail", "Insira um email válido.").isEmail();
+    req.checkBody("name", "Insira apenas texto.").matches(/^[a-z ]+$/i);
+    req.checkBody("phone_number", "Insira um contacto válido.").isMobilePhone('pt-PT');
 
     let post1 = [
         idRequest, content, description, adress, mail, name, date, phone_number, verification, verification_date, hour
@@ -235,6 +190,7 @@ function saveRequestType(req, res) {
         });
 }
 
+//ler pedidos por tipologia
 function readRequestByTypology(req, res) {
     const typology = req.param('typology');
     const post = { typology: typology };
@@ -255,9 +211,12 @@ function readRequestByTypology(req, res) {
     });
 }
 
+//alterar dados
 function updateRequest(req, res) {
     const id = req.sanitize('id').escape();
     const phone = req.sanitize('phone_number').escape();
+    
+    req.checkBody("phone_number", "Insira um contacto válido.").isMobilePhone('pt-PT');
 
     const errors = req.validationErrors();
     if (errors) {
@@ -285,6 +244,7 @@ function updateRequest(req, res) {
     }
 }
 
+//ler pedidos ainda nao aceites
 function readRequestVerification(req, res) {
     const statusF = req.param('verification');
     const post = { verification: statusF };
@@ -305,7 +265,7 @@ function readRequestVerification(req, res) {
     });
 }
 
-
+//apagar pedidos
 function deleteRequest(req, res) {
     const idRequest = req.param('id');
     const query = connect.con.query('DELETE FROM request_type WHERE id_request=?', idRequest, function(err, rows, fields) {
@@ -330,6 +290,7 @@ function deleteRequest(req, res) {
     });
 }
 
+//ler pedidos já começados
 function readRequestTrat(req, res) {
     const statusF = req.param('verification');
     const today = new Date().toISOString().slice(0, 10);
@@ -351,8 +312,9 @@ function readRequestTrat(req, res) {
     });
 }
 
+//número de pedidos pendentes
 function numberPendingReq(req, res) {
-    const query = connect.con.query('SELECT COUNT(*) FROM request WHERE verification = "null"', function(err, rows, fields) {
+    const query = connect.con.query('SELECT COUNT(*) FROM request WHERE verification is null', function(err, rows, fields) {
         console.log(query.sql);
         if (err) {
             console.log(err);
@@ -369,6 +331,7 @@ function numberPendingReq(req, res) {
     });
 }
 
+//número de pedidos acabados
 function numberTratReq(req, res) {
     const query = connect.con.query('SELECT COUNT(*) FROM request WHERE verification is not null', function(err, rows, fields) {
         console.log(query.sql);
@@ -387,6 +350,7 @@ function numberTratReq(req, res) {
     });
 }
 
+//número total de pedidos
 function numberTotalReq(req, res) {
     const query = connect.con.query('SELECT COUNT(*) FROM request', function(err, rows, fields) {
         console.log(query.sql);
@@ -404,6 +368,8 @@ function numberTotalReq(req, res) {
         }
     });
 }
+
+//número de pedidos em 2019
 function numberTotalPerDateReq2019(req, res) {
     const dateinf = "2018-12-31";
     const datesup = "2020-01-01";
@@ -426,6 +392,7 @@ function numberTotalPerDateReq2019(req, res) {
     });
 }
 
+//número de pedidos em 2020
 function numberTotalPerDateReq2020(req, res) {
     const dateinf = "2019-12-31";
     const datesup = "2021-01-01";
@@ -448,6 +415,7 @@ function numberTotalPerDateReq2020(req, res) {
     });
 }
 
+//número de pedidos em 2021
 function numberTotalPerDateReq2021(req, res) {
     const dateinf = "2020-12-31";
     const datesup = "2022-01-01";

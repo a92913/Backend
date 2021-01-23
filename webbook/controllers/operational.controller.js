@@ -48,77 +48,6 @@ function readOperationalID(req, res) {
 
 }
 
-//insert operationals
-/*function saveOperational(req, res) {
-    //receiving the database from the form that are send by post
-    const email = req.sanitize("email").escape();
-    const ps = req.sanitize("password").escape();
-    const profile = req.sanitize("profile").escape();
-
-    const idOperational = req.sanitize('id_operational').escape();
-    const nameOperational = req.sanitize('name').escape();
-    const birthDate = req.sanitize('birth_date').escape();
-    const adressOperational = req.sanitize('adress').escape();
-    const entryDate = req.sanitize('entry_date').escape();
-    const ccOperational = req.sanitize('cc').escape();
-    const phoneNumberOperational = req.sanitize('phone_number').escape();
-    const paymentOperational = req.sanitize('pay_per_hour').escape();
-    const operationalType = req.sanitize('operational_type').escape();
-    const specialityOperational = req.sanitize('speciality').escape();
-    const loginOperational = req.sanitize('id_login').escape();
-    //checks
-    req.checkBody("cc", "Insira um número de cartão válido.").isNumeric();
-    req.checkBody("phone_number", "Insira um contacto válido.").isMobilePhone('pt-PT');
-    req.checkBody("name", "Insira apenas texto.").matches(/^[a-z ]+$/i);
-    req.checkBody("operational_type", "Insira apenas texto.").matches(/^[a-z ]+$/i);
-    req.checkBody("speciality", "Insira apenas texto.").matches(/^[a-z ]+$/i);
-
-    const errors = req.validationErrors();
-    if (errors) {
-        res.send(errors);
-        return;
-    }
-    else if (nameOperational != "NULL" && birthDate != "NULL" && adressOperational != "NULL" && entryDate != "NULL" &&
-        ccOperational != "NULL" && phoneNumberOperational != "NULL" && paymentOperational != "NULL" && operationalType != "NULL" &&
-        specialityOperational != "NULL" && loginOperational != "NULL" && typeof(nameOperational) != 'undefined' &&
-        typeof(birthDate) != 'undefined' && typeof(adressOperational) != 'undefined' && typeof(entryDate) != 'undefined' &&
-        typeof(ccOperational) != 'undefined' && typeof(phoneNumberOperational) != 'undefined' && typeof(paymentOperational) != 'undefined' &&
-        typeof(operationalType) != 'undefined' && typeof(specialityOperational) != 'undefined' && typeof(loginOperational) != 'undefined') {
-        const post = {
-            id_operational: idOperational,
-            name: nameOperational,
-            birth_date: birthDate,
-            adress: adressOperational,
-            entry_date: entryDate,
-            cc: ccOperational,
-            phone_number: phoneNumberOperational,
-            pay_per_hour: paymentOperational,
-            operational_type: operationalType,
-            speciality: specialityOperational,
-            id_login: loginOperational
-        };
-        // create the insert query and execute in the bd to insert the data present in the post
-        const query = connect.con.query('INSERT INTO operational SET ?', post, function(err, rows, fields) {
-            console.log(query.sql);
-            if (!err) {
-                res.status(jsonMessages.db.successInsert.status).send(jsonMessages.db.successInsert);
-            }
-            else {
-                console.log(err);
-                if (err.code == "ER_DUP_ENTRY") {
-                    res.status(jsonMessages.db.duplicateData.status).send(jsonMessages.db.duplicateData);
-                }
-                else {
-                    res.status(jsonMessages.db.dbError.status).send(jsonMessages.db.dbError);
-                }
-            }
-        });
-    }
-    else {
-        res.status(jsonMessages.db.requiredData.status).send(jsonMessages.db.requiredData);
-    }
-}*/
-
 //delete operationals
 function deleteOperational(req, res) {
     const idOperational = req.param('id');
@@ -134,8 +63,8 @@ function deleteOperational(req, res) {
     });
 }
 
+//adicionar um operacional
 function saveOperational(req, res) {
-
     const idOperational = req.sanitize('id_operational').escape();
     const nameOperational = req.sanitize('name').escape();
     const birthDate = req.sanitize('birth_date').escape();
@@ -147,7 +76,10 @@ function saveOperational(req, res) {
     const operationalType = req.sanitize('operational_type').escape();
     const specialityOperational = req.sanitize('speciality').escape();
 
-
+    req.checkBody("name", "Insira apenas texto.").matches(/^[a-z ]+$/i);
+    req.checkBody("cc", "Insira um número de cartão válido").isNumeric();
+    req.checkBody("phone_number", "Insira um contacto válido.").isMobilePhone('pt-PT');
+    
     let post = [
         idOperational, nameOperational, birthDate, adressOperational, entryDate, ccOperational, phoneNumberOperational, paymentOperational, operationalType, specialityOperational, localStorage.getItem("idlogin")
     ];
@@ -175,8 +107,8 @@ function updateOperational(req, res) {
     const phoneNumberOperational = req.sanitize('phone_number').escape();
     const paymentOperational = req.sanitize('pay_per_hour').escape();
     //checks
-
-    //req.checkBody("phone_number", "Insira um contacto válido.").isMobilePhone('pt-PT');
+    req.checkBody("phone_number", "Insira um contacto válido.").isMobilePhone('pt-PT');
+    req.checkBody("pay_per_hour", "Insira apenas números.").isNumeric();
     const errors = req.validationErrors();
     if (errors) {
         res.send(errors);
@@ -202,6 +134,7 @@ function updateOperational(req, res) {
     }
 }
 
+//ler um operacional pelo número de telefone
 function readOperationalPhone(req, res) {
     const phone_number = req.param('phone');
     const post = { phone_number: phone_number };
@@ -222,6 +155,7 @@ function readOperationalPhone(req, res) {
     });
 }
 
+//ler operacionais pelo cc
 function readOperationalCc(req, res) {
     const cc = req.param('cc');
     const post = { cc: cc };
@@ -242,6 +176,7 @@ function readOperationalCc(req, res) {
     });
 }
 
+//número de operacionais
 function numberOperationals(req, res) {
     const query = connect.con.query('SELECT COUNT(*) FROM operational', function(err, rows, fields) {
         console.log(query.sql);
@@ -260,6 +195,7 @@ function numberOperationals(req, res) {
     });
 }
 
+//número de operacionais por data de entrada
 function numberTotalPerDate(req, res) {
     const date = req.param("date");
     const post = [date];
@@ -280,6 +216,7 @@ function numberTotalPerDate(req, res) {
     });
 }
 
+//alterar a foto de perfil
 function updateAvatar(req, res) {
 const idOperational = req.sanitize('id_operational').escape();
 const avatar = localStorage.getItem("foto");

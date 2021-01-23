@@ -2,10 +2,7 @@ const connect = require('../config/connectMYSQL');
 const jsonMessagesPath = __dirname + "/../assets/jsonMessages/";
 const jsonMessages = require(jsonMessagesPath + "bd");
 
-
-
-
-//read partnerss
+//read partners
 function readPartner(req, res) {
     const query = connect.con.query('SELECT num_partner, name, cc, phone_num, adress, donation, registration_date, date_bith mail, id_station FROM partner WHERE checkout_date is NULL order by num_partner ', function(err, rows, fields) {
         console.log(query.sql);
@@ -46,6 +43,7 @@ function readPartnerID(req, res) {
 
 }
 
+//adicionar um sócio
 function savePartner(req, res) {
     //receber os dados do formulário que são enviados por post
     const idPartner = req.sanitize('num_partner').escape();
@@ -67,11 +65,6 @@ function savePartner(req, res) {
         res.send(errors);
         return;
     }
-
-    /* if (idPartner != "NULL" && namePartner != "NULL" && registrationDate != "NULL" && email != "NULL" && phoneNum != "NULL" && ccPartner != "NULL" &&
-         donationPartner != "NULL" && idStation != "NULL" && typeof(idPartner) != 'undefined' && typeof(namePartner) != 'undefined' &&
-         typeof(registrationDate) != 'undefined' && typeof(email) != 'undefined' && typeof(phoneNum) != 'undefined' &&
-         typeof(ccPartner) != 'undefined' && typeof(donationPartner) != 'undefined' && typeof(idStation) != 'undefined') {*/
     const post = {
         num_partner: idPartner,
         name: namePartner,
@@ -101,11 +94,8 @@ function savePartner(req, res) {
         }
     });
 }
-/*else {
-    res.status(jsonMessages.db.requiredData.status).send(jsonMessages.db.requiredData);*/
 
-
-
+//apagar um sócio
 function deletePartner(req, res) {
     const idPartner = req.param('id');
     const query = connect.con.query('DELETE FROM partner WHERE num_partner=?', idPartner, function(err, rows, fields) {
@@ -120,6 +110,7 @@ function deletePartner(req, res) {
     });
 }
 
+//alterar dados dos sócios
 function updatePartner(req, res) {
     const idPartner = req.sanitize('num_partner').escape();
     const phoneNum = req.sanitize('phone_num').escape();
@@ -127,6 +118,9 @@ function updatePartner(req, res) {
     const donationPartner = req.sanitize('donation').escape();
     const mail = req.sanitize('mail').escape();
     const errors = req.validationErrors();
+    req.checkBody("phone_num", "Insira um contacto válido.").isMobilePhone('pt-PT');
+    req.checkBody("donation", "Insira apenas números.").isNumeric();
+    req.checkBody("mail", "Insira um email válido.").isEmail();
     if (errors) {
         res.send(errors);
         return;
@@ -150,6 +144,7 @@ function updatePartner(req, res) {
     }
 }
 
+//número de sócios
 function numberPartner(req, res) {
     const query = connect.con.query('SELECT COUNT(*) FROM partner WHERE checkout_date is NULL', function(err, rows, fields) {
         console.log(query.sql);
@@ -168,6 +163,7 @@ function numberPartner(req, res) {
     });
 }
 
+//modificar a data de saída
 function checkOutPartner(req, res) {
     const idPartner = req.param('id');
     const today = new Date().toISOString().slice(0, 10);
@@ -195,6 +191,7 @@ function checkOutPartner(req, res) {
     }
 }
 
+//numero de sócios por dada de entrada
 function numberTotalPerDate(req, res) {
     const date = req.param("date");
         const post = [date, date];

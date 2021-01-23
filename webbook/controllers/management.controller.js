@@ -45,12 +45,13 @@ function readManagementID(req, res) {
     });
 }
 
+//alterar dados dos diretores
 function updateManagement(req, res) {
     const idManagement = req.param('id');
     const adressManagement = req.sanitize('adress').escape();
     const phoneNumberManagement = req.sanitize('phone_number').escape();
     //checks
-    //req.checkBody("phone_num", "Insira um contacto válido.").isMobilePhone('pt-PT');
+    req.checkBody("phone_num", "Insira um contacto válido.").isMobilePhone('pt-PT');
     const errors = req.validationErrors();
     if (errors) {
         res.send(errors);
@@ -75,6 +76,7 @@ function updateManagement(req, res) {
     }
 }
 
+//adicionar diretores
 function saveManagement(req, res) {
     const idManagement = req.sanitize('id_management').escape();
     const nameManagement = req.sanitize('name').escape();
@@ -82,7 +84,10 @@ function saveManagement(req, res) {
     const ccManagement = req.sanitize('cc').escape();
     const phoneNumberManagement = req.sanitize('phone_number').escape();
     const adressManagement = req.sanitize('adress').escape();
-
+    
+    req.checkBody("cc", "Insira um número de cartão válido.").isNumeric();
+    req.checkBody("phone_number", "Insira um contacto válido.").isMobilePhone('pt-PT');
+    req.checkBody("name", "Insira apenas texto.").matches(/^[a-z ]+$/i);
 
     let post = [
         idManagement, nameManagement, birthDate, ccManagement, phoneNumberManagement, adressManagement, localStorage.getItem("idlogin")
@@ -105,8 +110,7 @@ function saveManagement(req, res) {
         });
 }
 
-
-
+//apagar diretores
 function deleteManagement(req, res) {
     const idManagement = req.param('id');
     const query = connect.con.query('DELETE FROM management WHERE id_management=?', idManagement, function(err, rows, fields) {
@@ -121,6 +125,7 @@ function deleteManagement(req, res) {
     });
 }
 
+//ler diretores pelo número de telefone
 function readManagementPhone(req, res) {
     const phone_number = req.param('phone');
     const post = { phone_number: phone_number };
@@ -141,6 +146,7 @@ function readManagementPhone(req, res) {
     });
 }
 
+//ler diretores pelo cc
 function readManagementCc(req, res) {
     const cc = req.param('cc');
     const post = { cc: cc };
@@ -161,12 +167,11 @@ function readManagementCc(req, res) {
     });
 }
 
-
+//alterar a pass de um diretor
 function updatePassword(req, res) {
     const idManagement = req.param('id');
     const passwordManagement = req.sanitize('password').escape();
-    //checks
-    //req.checkBody("phone_num", "Insira um contacto válido.").isMobilePhone('pt-PT');
+
     const errors = req.validationErrors();
     if (errors) {
         res.send(errors);
@@ -191,6 +196,7 @@ function updatePassword(req, res) {
     }
 }
 
+//alterar foto de perfil
 function updateAvatar(req, res) {
 const idOperational = req.sanitize('id_operational').escape();
 const avatar = localStorage.getItem("foto");

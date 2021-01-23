@@ -3,6 +3,7 @@ const jsonMessagesPath = __dirname + "/../assets/jsonMessages/";
 const jsonMessages = require(jsonMessagesPath + "bd");
 var bCrypt = require('bcrypt-nodejs');
 
+//ler por email
 function readEmail(req, res) {
     const email = req.param('email');
     const post = { email: email };
@@ -23,6 +24,7 @@ function readEmail(req, res) {
     });
 }
 
+//ler utilizadores por id
 function readUserID(req, res) {
     const id = req.param('id');
     const post = { id: id };
@@ -43,9 +45,12 @@ function readUserID(req, res) {
     });
 }
 
+//alterar dados
 function updateUser(req, res) {
     const id = req.sanitize('id').escape();
     const email = req.sanitize('email').escape();
+    
+    req.checkBody("email", "Insira um email válido.").isEmail();
 
     const errors = req.validationErrors();
     if (errors) {
@@ -73,6 +78,7 @@ function updateUser(req, res) {
     }
 }
 
+//apagar utilizador
 function deleteUser(req, res) {
     const idUser = req.param('id');
     const query = connect.con.query('DELETE FROM users WHERE id=?', idUser, function(err, rows, fields) {
@@ -87,6 +93,7 @@ function deleteUser(req, res) {
     });
 }
 
+//alterar pass
 function alt (password) {
         console.log(password);
 

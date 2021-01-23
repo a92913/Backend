@@ -41,27 +41,7 @@ function readOccurrence(req, res) {
     });
 }
 
-    //lê as occorrencias que ainda estão a decorrer
-/*function readOccurrenceFinished(req, res) {
-    const statusF = req.param('status');
-    const post = { status: statusF};
-    const query = connect.con.query('SELECT id_occurrence, local, distance, occurrence_type, status, arrival, departure, cost, origin, description, victim_number, id_entity, id_request FROM occurrence where status= "Finalizada" ', post, function(err, rows, fields) {
-        console.log(query.sql);
-        if (err) {
-            console.log(err);
-            res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.dbError);
-        }
-        else {
-            if (rows.length == 0) {
-                res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.noRecords);
-            }
-            else {
-                res.send(rows);
-            }
-        }
-    });
-}*/
-
+//lê as ocorrencias ainda a decorrer
 function readOccurrenceStatus(req, res) {
     const statusF = req.param('status');
     const post = { status: statusF};
@@ -82,6 +62,7 @@ function readOccurrenceStatus(req, res) {
     });
 }
 
+//número de ocorrencias ainda ativas
 function numberOccAct(req, res) {
     const query = connect.con.query('SELECT COUNT(*) FROM occurrence WHERE status = "Em curso"', function(err, rows, fields) {
         console.log(query.sql);
@@ -100,6 +81,7 @@ function numberOccAct(req, res) {
     });
 }
 
+//número de ocorrencias acabadas
 function numberOccFin(req, res) {
     const query = connect.con.query('SELECT COUNT(*) FROM occurrence WHERE status = "Finalizada"', function(err, rows, fields) {
         console.log(query.sql);
@@ -118,6 +100,7 @@ function numberOccFin(req, res) {
     });
 }
 
+//número total de ocorrencias
 function numberOccTotal(req, res) {
     const query = connect.con.query('SELECT COUNT(*) FROM occurrence', function(err, rows, fields) {
         console.log(query.sql);

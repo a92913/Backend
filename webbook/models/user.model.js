@@ -1,3 +1,4 @@
+//tabela utilizadores
 module.exports = function(sequelize, Sequelize) {
 	let User = sequelize.define('user', {
 		id: { autoIncrement: true, primaryKey: true, type: Sequelize.INTEGER },

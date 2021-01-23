@@ -50,10 +50,6 @@ app.use(passport.session()); // persistent login sessions
 require('./routes/auth.js')(app, passport);
 require('./config/passport/passport.js')(passport, models.user);
 
-/*app.use(passport.initialize());
-app.use(passport.session()); // persistent login sessions
-require('./routes/auth.js')(app, passport);
-require('./config/passport/passport.js')(passport, models.user);*/
 
 //Sync Database
 models.sequelize.sync().then(function() {
@@ -65,6 +61,7 @@ models.sequelize.sync().then(function() {
 
 //app.use('/', router); 
 module.exports = app;
+
 
 require("./routes/main.route.js");
 require("./controllers/partner.controller.js");

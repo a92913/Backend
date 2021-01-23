@@ -2,6 +2,7 @@ const connect = require('../config/connectMYSQL');
 const jsonMessagesPath = __dirname + "/../assets/jsonMessages/";
 const jsonMessages = require(jsonMessagesPath + "bd");
 
+//ler os pedidos de ajuda 
 function readHelpRequestTotal(req, res) {
     const query = connect.con.query('SELECT id_request, id_occurrence, reason, num_operationals, num_materials, verification, materials_type FROM help_request ORDER BY id_request', function(err, rows, fields) {
         console.log(query.sql);
@@ -20,6 +21,7 @@ function readHelpRequestTotal(req, res) {
     });
 }
 
+//ler os pedidos de ajuda ainda não aprovados
 function readHelpRequest(req, res) {
     const query = connect.con.query('SELECT id_request, id_occurrence, reason, num_operationals, num_materials, materials_type FROM help_request WHERE verification is null ORDER BY id_request', function(err, rows, fields) {
         console.log(query.sql);
@@ -37,6 +39,8 @@ function readHelpRequest(req, res) {
         }
     });
 }
+
+//ler os pedidos de ajuda por id
 function readHelpRequestID(req, res) {
     const idRequest = req.param('id');
     const post = { id_request: idRequest };
@@ -58,6 +62,7 @@ function readHelpRequestID(req, res) {
     });
 }
 
+//número de pedidos não aprovados 
 function numberHelpRequest(req, res) {
     const query = connect.con.query('SELECT COUNT(*) FROM help_request WHERE verification is null', function(err, rows, fields) {
         console.log(query.sql);

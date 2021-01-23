@@ -7,7 +7,7 @@ let localStorage = LocalStorage('./scratch');
 
 //read centralists
 function readCentralist(req, res) {
-    const query = connect.con.query('SELECT id_centralist, name, adress, phone_num, cc, pay_per_hour, entry_date, date_birth, id_login FROM centralist order by id_centralist ', function(err, rows, fields) {
+    const query = connect.con.query('SELECT id_centralist, name, adress, phone_num, cc, pay_per_hour, entry_date, date_birth, id_login FROM centralist order by id_login ', function(err, rows, fields) {
         console.log(query.sql);
         if (err) {
             console.log(err);
@@ -23,6 +23,7 @@ function readCentralist(req, res) {
         }
     });
 }
+
 //read centralists by id
 function readCentralistID(req, res) {
     const idCentralist = req.param('id');
@@ -44,10 +45,11 @@ function readCentralistID(req, res) {
     });
 }
 
+//read centralists by id_login
 function readCentralistIDLogin(req, res) {
     const idlogin = req.param('id');
     const post = { id_login: idlogin };
-    const query = connect.con.query('SELECT id_centralist, name, cc, phone_num, adress, pay_per_hour, entry_date, date_birth, id_login FROM centralist where ? ', post, function(err, rows, fields) {
+    const query = connect.con.query('SELECT id_login, name, cc, phone_num, adress, pay_per_hour, entry_date, date_birth, id_centralist  FROM centralist where ? ', post, function(err, rows, fields) {
         console.log(query.sql);
         if (err) {
             console.log(err);
@@ -65,61 +67,6 @@ function readCentralistIDLogin(req, res) {
 }
 
 //insert centralists
-/*function saveCentralist(req, res) {
-    //receiving the database from the form that are send by post
-    const idCentralist = req.sanitize('id_centralist').escape();
-    const nameCentralist = req.sanitize('name').escape();
-    const dateBirth = req.sanitize('date_birth').escape();
-    const ccCentralist = req.sanitize('cc').escape();
-    const phoneNumberCentralist = req.sanitize('phone_num').escape();
-    const adressCentralist = req.sanitize('adress').escape();
-    const loginCentralist = req.sanitize('id_login').escape();
-    //checks
-     req.checkBody("cc", "Insira um número de cartão válido.").isNumeric();
-     req.checkBody("phone_num", "Insira um contacto válido.").isMobilePhone('pt-PT');
-     req.checkBody("name", "Insira apenas texto.").matches(/^[a-z ]+$/i);
-
-    const errors = req.validationErrors();
-    if (errors) {
-        res.send(errors);
-        return;
-    }
-    else if ( nameCentralist != "NULL" && dateBirth != "NULL" && ccCentralist != "NULL" && phoneNumberCentralist != "NULL" &&
-        adressCentralist != "NULL" && loginCentralist != "NULL"   &&
-        typeof(nameCentralist) != 'undefined' &&
-        typeof(dateBirth) != 'undefined' && typeof(ccCentralist) != 'undefined' && typeof(phoneNumberCentralist) != 'undefined' &&
-        typeof(adressCentralist) != 'undefined' && typeof(loginCentralist) != 'undefined') {
-        const post = {
-            id_centralist: idCentralist,
-            name: nameCentralist,
-            date_birth: dateBirth,
-            cc: ccCentralist,
-            phone_num: phoneNumberCentralist,
-            adress: adressCentralist,
-            id_login: loginCentralist
-        };
-        // create the insert query and execute in the bd to insert the data present in the post
-        const query = connect.con.query('INSERT INTO centralist SET ?', post, function(err, rows, fields) {
-            console.log(query.sql);
-            if (!err) {
-                res.status(jsonMessages.db.successInsert.status).send(jsonMessages.db.successInsert);
-            }
-            else {
-                console.log(err);
-                if (err.code == "ER_DUP_ENTRY") {
-                    res.status(jsonMessages.db.duplicateData.status).send(jsonMessages.db.duplicateData);
-                }
-                else {
-                    res.status(jsonMessages.db.dbError.status).send(jsonMessages.db.dbError);
-                }
-            }
-        });
-    }
-    else {
-        res.status(jsonMessages.db.requiredData.status).send(jsonMessages.db.requiredData);
-    }
-}*/
-
 function saveCentralist(req, res) {
 
     const idCentralist = req.sanitize('id_centralist').escape();
@@ -134,6 +81,7 @@ function saveCentralist(req, res) {
     req.checkBody("cc", "Insira um número de cartão válido.").isNumeric();
     req.checkBody("phone_num", "Insira um contacto válido.").isMobilePhone('pt-PT');
     req.checkBody("name", "Insira apenas texto.").matches(/^[a-z ]+$/i);
+    req.checkBody("pay_per_hour", "Insira um pagamento válido.").isNumeric();
 
     let post = [
         idCentralist, nameCentralist, birthDate, ccCentralist, phoneNumberCentralist, adressCentralist, localStorage.getItem("idlogin"), salaryCentralist, entrydateCentralist
@@ -171,13 +119,15 @@ function deleteCentralist(req, res) {
     });
 }
 
+//alterar dados dos centralistas
 function updateCentralist(req, res) {
     const idCentralist = req.param('id');
     const adressCentralist = req.sanitize('adress').escape();
     const phoneNumberCentralist = req.sanitize('phone_num').escape();
     const paymentCentralist = req.sanitize('pay_per_hour').escape();
     //checks
-    //req.checkBody("phone_num", "Insira um contacto válido.").isMobilePhone('pt-PT');
+    req.checkBody("phone_num", "Insira um contacto válido.").isMobilePhone('pt-PT');
+    req.checkBody("pay_per_hour", "Insira apenas números.").isNumeric();
     const errors = req.validationErrors();
     if (errors) {
         res.send(errors);
@@ -203,6 +153,7 @@ function updateCentralist(req, res) {
     }
 }
 
+//ler os centralistas pelo número de telefone
 function readCentralistPhone(req, res) {
     const phone_num = req.param('phone');
     const post = { phone_num: phone_num };
@@ -220,9 +171,10 @@ function readCentralistPhone(req, res) {
                 res.send(rows);
             }
         }
-    });
+    }   );
 }
 
+//ler os centralistas pelo cc
 function readCentralistCc(req, res) {
     const cc = req.param('cc');
     const post = { cc: cc };
@@ -243,6 +195,7 @@ function readCentralistCc(req, res) {
     });
 }
 
+//contar o número de centralistas
 function numberCentralist(req, res) {
     const query = connect.con.query('SELECT COUNT(*) FROM centralist', function(err, rows, fields) {
         console.log(query.sql);
@@ -261,6 +214,7 @@ function numberCentralist(req, res) {
     });
 }
 
+//número de centralistas por data de entrada
 function numberTotalPerDate(req, res) {
     const date = req.param("date");
     const post = [date];

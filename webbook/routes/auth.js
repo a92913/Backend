@@ -3,7 +3,9 @@
 
 const authController = require('../controllers/auth.controller.js');
 module.exports = function(app, passport) {
+    //rota de registo
     app.get('/signup', authController.signup);
+    //rota de login
     app.get('/signin', authController.signin);
     app.get('/signupSuccess', authController.signupSuccess);
     app.get('/signinSuccess', authController.signinSuccess);
@@ -11,6 +13,7 @@ module.exports = function(app, passport) {
         successRedirect: '/signupSuccess',
         failureRedirect: '/signup'
     }));
+    //rota de logout
     app.get('/logout', authController.logout);
     app.post('/signin', passport.authenticate('local-signin', {
         successRedirect: '/signinSuccess',
