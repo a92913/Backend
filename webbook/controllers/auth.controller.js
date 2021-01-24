@@ -17,6 +17,7 @@ exports.signin = function(req, res) {
 exports.signinSuccess = function(req, res) {
     const id = global.sessData.passport.user;
     const post = { id: id };
+    console.log(id);
     const query = connect.con.query('SELECT id, email, password, profile FROM users where ? ', post, function(err, rows, fields) {
         console.log(query.sql);
         if (!err) {
@@ -29,7 +30,7 @@ exports.signinSuccess = function(req, res) {
             else {
 
                 var msgFinal = {
-                    MSG: rows[0],
+                    MSG: req.user,
                     msg: "Success",
                     message: {
                         eng: "Login with sucess",
@@ -38,7 +39,7 @@ exports.signinSuccess = function(req, res) {
                     status: 200,
                     success: true
                 }
-
+                console.log(msgFinal);
                 res.send(msgFinal);
 
             }
