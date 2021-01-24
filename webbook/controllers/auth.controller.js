@@ -13,8 +13,7 @@ exports.signin = function(req, res) {
     res.status(jsonMessages.user.invalid.status).send(jsonMessages.user.invalid);
 };
 exports.signinSuccess = function(req, res) {
-    res.status(jsonMessages.user.signinSuccess.status). res.json(JSON.parse(req.user));
-    
+    res.status(jsonMessages.user.signinSuccess.status).send.json(req.user);
 };
 
 exports.logout = function(req, res, err) {
