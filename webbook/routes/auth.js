@@ -16,7 +16,7 @@ module.exports = function(app, passport) {
     //rota de logout
     app.get('/logout', authController.logout);
     app.post('/signin', passport.authenticate('local-signin', {
-        //successRedirect: '/signinSuccess',
+        successRedirect: '/signinSuccess',
         failureRedirect: '/signin'
     }));
     app.get("/profile", passport.authenticate("cookie", {
