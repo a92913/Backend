@@ -14,26 +14,44 @@ exports.signin = function(req, res) {
     res.status(jsonMessages.user.invalid.status).send(jsonMessages.user.invalid);
 };
 
-exports.signinSuccess = function(res) {
+exports.signinSuccess = function(req, res) {
     const id = global.sessData.passport.user;
     const post = { id: id };
     const query = connect.con.query('SELECT id, email, password, profile FROM users where ? ', post, function(err, rows, fields) {
         console.log(query.sql);
-        if (err) {
-            console.log(err);
-            //res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.dbError);
-        }
-        else {
+        if (!err) {
+            //verifica os resultados se o número de linhas for 0 devolve dados não encontrados, caso contrário envia os resultados (rows).
             if (rows.length == 0) {
-               // res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.noRecords);
+                res.status(404).send({
+                    "msg": "data not found"
+                });
             }
             else {
-                res.send(rows);
+
+                var msgFinal = {
+                    MSG: rows[0],
+                    msg: "Success",
+                    message: {
+                        eng: "Login with sucess",
+                        pt: "Login com sucesso"
+                    },
+                    status: 200,
+                    success: true
+                }
+
+                res.send(msgFinal);
+
             }
         }
+        else
+            res.status(400).send({
+                "msg": err.code
+            });
 
-    })
-}
+    });
+
+
+};
 
 
 exports.logout = function(req, res, err) {
