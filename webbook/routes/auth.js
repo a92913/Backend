@@ -10,7 +10,7 @@ module.exports = function(app, passport) {
     app.get('/signupSuccess', authController.signupSuccess);
     app.get('/signinSuccess', authController.signinSuccess);
     app.post('/signup', passport.authenticate('local-signup', {
-        successRedirect: '/signupSuccess',
+       // successRedirect: '/signupSuccess',
         failureRedirect: '/signup'
     }));
     //rota de logout

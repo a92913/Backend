@@ -19,7 +19,19 @@ exports.signinSuccess = function(req, res) {
     const post = { id: id };
     const query = connect.con.query('SELECT id, email, password, profile FROM users where ? ', post, function(err, rows, fields) {
         console.log(query.sql);
-        res.send(rows);
+        if (err) {
+            console.log(err);
+            //res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.dbError);
+        }
+        else {
+            if (rows.length == 0) {
+               // res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.noRecords);
+            }
+            else {
+                res.send(rows);
+            }
+        }
+
     })
 }
 
