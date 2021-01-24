@@ -50,7 +50,7 @@ function updateUser(req, res) {
     const id = req.sanitize('id').escape();
     const email = req.sanitize('email').escape();
 
-    req.checkBody("email", "Insira um email válido.").isEmail();
+    req.check("email", "Insira um email válido.").isEmail();
 
     const errors = req.validationErrors();
     if (errors) {

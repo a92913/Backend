@@ -216,7 +216,7 @@ function updateRequest(req, res) {
     const id = req.sanitize('id').escape();
     const phone = req.sanitize('phone_number').escape();
     
-    req.checkBody("phone_number", "Insira um contacto válido.").isMobilePhone('pt-PT');
+    req.check("phone_number", "Insira um contacto válido.").isMobilePhone('pt-PT');
 
     const errors = req.validationErrors();
     if (errors) {

@@ -107,9 +107,9 @@ function saveManagement(req, res) {
     const phoneNumberManagement = req.sanitize('phone_number').escape();
     const adressManagement = req.sanitize('adress').escape();
     
-    req.checkBody("cc", "Insira um número de cartão válido.").isNumeric();
-    req.checkBody("phone_number", "Insira um contacto válido.").isMobilePhone('pt-PT');
-    req.checkBody("name", "Insira apenas texto.").matches(/^[a-z ]+$/i);
+    req.check("cc", "Insira um número de cartão válido.").isNumeric();
+    req.check("phone_number", "Insira um contacto válido.").isMobilePhone('pt-PT');
+    req.check("name", "Insira apenas texto.").matches(/^[a-z ]+$/i);
 
     let post = [
         idManagement, nameManagement, birthDate, ccManagement, phoneNumberManagement, adressManagement, localStorage.getItem("idlogin")

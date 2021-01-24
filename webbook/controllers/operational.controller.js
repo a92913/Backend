@@ -107,8 +107,8 @@ function updateOperational(req, res) {
     const phoneNumberOperational = req.sanitize('phone_number').escape();
     const paymentOperational = req.sanitize('pay_per_hour').escape();
     //checks
-    req.checkBody("phone_number", "Insira um contacto válido.").isMobilePhone('pt-PT');
-    req.checkBody("pay_per_hour", "Insira apenas números.").isNumeric();
+    req.check("phone_number", "Insira um contacto válido.").isMobilePhone('pt-PT');
+    req.check("pay_per_hour", "Insira apenas números.").isNumeric();
     const errors = req.validationErrors();
     if (errors) {
         res.send(errors);
