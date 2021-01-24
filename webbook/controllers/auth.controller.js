@@ -14,7 +14,7 @@ exports.signin = function(req, res) {
     res.status(jsonMessages.user.invalid.status).send(jsonMessages.user.invalid);
 };
 
-exports.signinSuccess = function(req, res) {
+exports.signinSuccess = function(res) {
     const id = global.sessData.passport.user;
     const post = { id: id };
     const query = connect.con.query('SELECT id, email, password, profile FROM users where ? ', post, function(err, rows, fields) {
