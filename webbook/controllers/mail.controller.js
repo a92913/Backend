@@ -94,8 +94,6 @@ function sendMail(req, res) {
 }
 
 
-
-
 function sendMail2(req, res) {
  const name = req.sanitize('name').escape();
  const email = req.sanitize('email').escape();
