@@ -106,7 +106,6 @@ app.get('/users/:id', controllerUser.readUserID);
 app.put('/users/:id', controllerUser.updateUser);
 app.put('/uesersupdatePassword/:id', controllerUser.updatePassword);
 app.delete('/users/:id', controllerUser.deleteUser);
-app.get('/a', controllerUser.a);
 
 //para enviar o email
 app.post('/emails', controllerMail.sendMail);
