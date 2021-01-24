@@ -15,8 +15,9 @@ exports.signin = function(req, res) {
 };
 
 exports.signinSuccess = function(req, res) {
+      res.status(jsonMessages.user.signupSuccess.status).send(jsonMessages.user.signinSuccess);
 
-    const id = global.sessData.passport.user;
+  /*  const id = global.sessData.passport.user;
     var msgFinal = {
         MSG: id,
         msg: "Success",
@@ -28,7 +29,7 @@ exports.signinSuccess = function(req, res) {
         success: true
     }
     console.log(msgFinal);
-    res.send(msgFinal);
+    res.send(msgFinal);*/
 }
 
 
