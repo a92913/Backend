@@ -18,12 +18,9 @@ exports.signinSuccess = function(req, res) {
     const post = { id: id };
     const query = connect.con.query('SELECT id, email, password, profile FROM users where ? ', post, function(err, rows, fields) {
         console.log(query.sql);
-        res.status(jsonMessages.user.signinSuccess.status).send(rows);
         res.send(rows);
     })
 }
-
-
 
 
 exports.logout = function(req, res, err) {
