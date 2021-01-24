@@ -13,8 +13,7 @@ exports.signin = function(req, res) {
     res.status(jsonMessages.user.invalid.status).send(jsonMessages.user.invalid);
 };
 exports.signinSuccess = function(req, res) {
-    const user = global.sessData.passport.user;
-    res.status(jsonMessages.user.signinSuccess.status).send(user);
+    res.status(jsonMessages.user.signinSuccess.status).send(req.user);
     
 };
 
