@@ -1,5 +1,6 @@
 const jsonMessagesPath = __dirname + "/../assets/jsonMessages/";
 const jsonMessages = require(jsonMessagesPath + "login");
+const connect = require('../config/connectMYSQL');
 var exports = module.exports = {};
 
 exports.signup = function(req, res) {
@@ -13,9 +14,17 @@ exports.signin = function(req, res) {
     res.status(jsonMessages.user.invalid.status).send(jsonMessages.user.invalid);
 };
 exports.signinSuccess = function(req, res) {
-    //res.status(jsonMessages.user.signinSuccess.status).send(req.user);
-    res.json(req.user);
-};
+    const id = global.sessData.passport.user;
+    const post = { id: id };
+    const query = connect.con.query('SELECT id, email, password, profile FROM users where ? ', post, function(err, rows, fields) {
+        console.log(query.sql);
+        res.status(jsonMessages.user.signinSuccess.status).send(rows);
+        res.send(rows);
+    })
+}
+
+
+
 
 exports.logout = function(req, res, err) {
     req.session.destroy(function(err) {
