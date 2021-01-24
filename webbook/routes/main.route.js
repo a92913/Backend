@@ -114,7 +114,6 @@ app.post('/emails2', controllerMail.sendMail2);
 module.exports = app;
 
 
-
 //funçao para o login
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
