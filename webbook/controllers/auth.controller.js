@@ -13,6 +13,7 @@ exports.signupSuccess = function(req, res) {
 exports.signin = function(req, res) {
     res.status(jsonMessages.user.invalid.status).send(jsonMessages.user.invalid);
 };
+
 exports.signinSuccess = function(req, res) {
     console.log(global.sessData.passport.user)
     const id = global.sessData.passport.user;
@@ -21,7 +22,7 @@ exports.signinSuccess = function(req, res) {
         console.log(query.sql);
         res.send(rows);
     })
-}
+};
 
 
 exports.logout = function(req, res, err) {
