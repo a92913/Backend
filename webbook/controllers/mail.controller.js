@@ -73,6 +73,8 @@ function sendMail(req, res) {
   else {
    console.log('Email sent: ' + info.response);
    res.status(jsonMessages.mail.mailSent.status).send(jsonMessages.mail.mailSent);
+   
+   
    var userPassword = alt(password);
    const update = [userPassword, email];
    console.log(update);
@@ -92,8 +94,10 @@ function sendMail(req, res) {
 }
 
 
+
+
 function sendMail2(req, res) {
- //const name = req.sanitize('name').escape();
+ const name = req.sanitize('name').escape();
  const email = req.sanitize('email').escape();
  // const subject = req.sanitize('subject').escape();
  // req.checkBody("name", "Insira apenas texto", 'pt-PT').matches(/^[a-z ]+$/i);
@@ -107,7 +111,7 @@ function sendMail2(req, res) {
  //  if (typeof(email) != "undefined" && typeof(subject) != "undefined" && typeof(name) != "undefined") {
 
  let bodycontent = "";
- // bodycontent += 'Caro ' + req.body.name + ',<br>' + '<br>';
+ bodycontent += 'Caro/a ' + name + ',<br>' + '<br>';
  bodycontent += 'Obrigado por confiar em nós!' + '<br>' + '<br>';
  bodycontent += 'O seu pedido foi registado e será análisado.' + '<br>' + '<br>';
  bodycontent += 'Atenciosamente, a sua Equipa Security4All.';
