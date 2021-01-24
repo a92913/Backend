@@ -16,43 +16,26 @@ exports.signin = function(req, res) {
 
 exports.signinSuccess = function(req, res) {
     const id = global.sessData.passport.user;
-    const post = { id: id };
-    console.log(id);
-    const query = connect.con.query('SELECT id, email, password, profile FROM users where ? ', post, function(err, rows, fields) {
-        console.log(query.sql);
-        if (!err) {
-            //verifica os resultados se o número de linhas for 0 devolve dados não encontrados, caso contrário envia os resultados (rows).
-            if (rows.length == 0) {
-                res.status(404).send({
-                    "msg": "data not found"
-                });
-            }
-            else {
 
-                var msgFinal = {
-                    MSG: req.user,
-                    msg: "Success",
-                    message: {
-                        eng: "Login with sucess",
-                        pt: "Login com sucesso"
-                    },
-                    status: 200,
-                    success: true
-                }
-                console.log(msgFinal);
-                res.send(msgFinal);
+    var msgFinal = {
+        MSG: id,
+        msg: "Success",
+        message: {
+            eng: "Login with sucess",
+            pt: "Login com sucesso"
+        },
+        status: 200,
+        success: true
+    }
+    console.log(msgFinal);
+    res.send(msgFinal);
 
-            }
-        }
-        else
-            res.status(400).send({
-                "msg": err.code
-            });
-
-    });
+}
 
 
-};
+
+
+
 
 
 exports.logout = function(req, res, err) {
