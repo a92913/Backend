@@ -21,11 +21,13 @@ app.get('/', function(req,res){
 app.get('/partners/', controllerPartner.readPartner);
 app.get('/partners/:id', controllerPartner.readPartnerID);
 app.post('/partners/', controllerPartner.savePartner);
+app.put('/partnersRes/:id', controllerPartner.updatePartnerResc);
 app.put('/partners/:id', controllerPartner.updatePartner);
 app.delete('/partners/:id', controllerPartner.deletePartner);
 app.get('/numberPartner/', controllerPartner.numberPartner);
 app.put('/checkOutPartners/:id', controllerPartner.checkOutPartner);
 app.get('/numberPerDatePartner/:date', controllerPartner.numberTotalPerDate);
+app.get('/partnersCC/:cc', controllerPartner.readPartnerCC);
 
 //operational routes
 app.get('/operationals/', controllerOperational.readOperational);

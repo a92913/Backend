@@ -4,7 +4,7 @@ const jsonMessages = require(jsonMessagesPath + "bd");
 
 //read partners
 function readPartner(req, res) {
-    const query = connect.con.query('SELECT num_partner, name, cc, phone_num, adress, donation, registration_date, date_bith mail, id_station FROM partner WHERE checkout_date is NULL order by num_partner ', function(err, rows, fields) {
+    const query = connect.con.query('SELECT num_partner, name, cc, phone_num, adress, donation, registration_date, date_bith mail, id_station FROM partner WHERE checkout_date = "1111-01-01" order by num_partner ', function(err, rows, fields) {
         console.log(query.sql);
         if (err) {
             console.log(err);
@@ -43,6 +43,28 @@ function readPartnerID(req, res) {
 
 }
 
+//read partners by cc
+function readPartnerCC(req, res) {
+    const cc = req.param('cc');
+    const post = { cc: cc };
+    const query = connect.con.query('SELECT num_partner, name, registration_date, date_bith, mail, phone_num, cc, adress, donation, id_station, checkout_date FROM partner where ? ', post, function(err, rows, fields) {
+        console.log(query.sql);
+        if (err) {
+            console.log(err);
+            res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.dbError);
+        }
+        else {
+            if (rows.length == 0) {
+                res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.noRecords);
+            }
+            else {
+                res.send(rows);
+            }
+        }
+    });
+
+}
+
 //adicionar um sócio
 function savePartner(req, res) {
     //receber os dados do formulário que são enviados por post
@@ -56,6 +78,7 @@ function savePartner(req, res) {
     const adressPartner = req.sanitize('adress').escape();
     const donationPartner = req.sanitize('donation').escape();
     const idStation = req.sanitize('id_station').escape();
+    const checkOut = "1111/1/1";
     req.checkBody("mail", "Insira um email válido.").isEmail;
     req.checkBody("mail", "Insira o seu email.").notEmpty;
     req.checkBody("dateBirth").optional({ checkFalsy: true });
@@ -75,7 +98,8 @@ function savePartner(req, res) {
         cc: ccPartner,
         adress: adressPartner,
         donation: donationPartner,
-        id_station: idStation
+        id_station: idStation,
+        checkout_date:checkOut
     }
 
     //criar e executar a query de gravação na BD para inserir os dados presentes no post
@@ -108,6 +132,42 @@ function deletePartner(req, res) {
             res.status(jsonMessages.db.dbError.status).send(jsonMessages.db.dbError);
         }
     });
+}
+
+//alterar dados dos sócios na reinscrição
+function updatePartnerResc(req, res) {
+    const idPartner = req.sanitize('num_partner').escape();
+    const phoneNum = req.sanitize('phone_num').escape();
+    const adressPartner = req.sanitize('adress').escape();
+    const donationPartner = req.sanitize('donation').escape();
+    const mail = req.sanitize('mail').escape();
+    const checkout_date = "1/1/1";
+    const errors = req.validationErrors();
+    req.check("phone_num", "Insira um contacto válido.").isMobilePhone('pt-PT');
+    req.check("donation", "Insira apenas números.").isNumeric();
+    req.check("mail", "Insira um email válido.").isEmail();
+    if (errors) {
+        res.send(errors);
+        return;
+    }
+    else {
+        if (idPartner != "NULL" && donationPartner != "NULL" && typeof(idPartner) != 'undefined' && typeof(donationPartner) != 'undefined' && typeof(phoneNum) != 'undefined' && typeof(adressPartner) != 'undefined') {
+            const update = [phoneNum, adressPartner, donationPartner, mail, checkout_date, idPartner];
+            console.log(update);
+            const query = connect.con.query('UPDATE partner SET phone_num =?, adress =?, donation=?, mail=?, checkout_date=? WHERE num_partner=?', update, function(err, rows, fields) {
+                console.log(query.sql);
+                if (!err) {
+                    res.status(jsonMessages.db.successUpdate.status).send(jsonMessages.db.successUpdate);
+                }
+                else {
+                    console.log(err);
+                    res.status(jsonMessages.db.successUpdate.status).send(jsonMessages.db.successUpdate);
+                }
+            });
+        }
+        else
+            res.status(jsonMessages.db.requiredData.status).send(jsonMessages.db.requiredData);
+    }
 }
 
 //alterar dados dos sócios
@@ -146,7 +206,7 @@ function updatePartner(req, res) {
 
 //número de sócios
 function numberPartner(req, res) {
-    const query = connect.con.query('SELECT COUNT(*) FROM partner WHERE checkout_date is NULL', function(err, rows, fields) {
+    const query = connect.con.query('SELECT COUNT(*) FROM partner WHERE checkout_date = "1111-01-01"', function(err, rows, fields) {
         console.log(query.sql);
         if (err) {
             console.log(err);
@@ -194,22 +254,22 @@ function checkOutPartner(req, res) {
 //numero de sócios por dada de entrada
 function numberTotalPerDate(req, res) {
     const date = req.param("date");
-        const post = [date, date];
-        const query = connect.con.query('SELECT COUNT(*) FROM partner WHERE (checkout_date is NULL or checkout_date > ?) AND registration_date <?', post, function(err, rows, fields) {
-            console.log(query.sql);
-            if (err) {
-                console.log(err);
-                res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.dbError);
+    const post = [date, date];
+    const query = connect.con.query('SELECT COUNT(*) FROM partner WHERE (checkout_date is NULL or checkout_date > ?) AND registration_date <?', post, function(err, rows, fields) {
+        console.log(query.sql);
+        if (err) {
+            console.log(err);
+            res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.dbError);
+        }
+        else {
+            if (rows.length == 0) {
+                res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.noRecords);
             }
             else {
-                if (rows.length == 0) {
-                    res.status(jsonMessages.db.noRecords.status).send(jsonMessages.db.noRecords);
-                }
-                else {
-                    res.send(rows);
-                }
+                res.send(rows);
             }
-        });
+        }
+    });
 }
 
 //exportar as funções
@@ -218,8 +278,10 @@ module.exports = {
     readPartnerID: readPartnerID,
     savePartner: savePartner,
     deletePartner: deletePartner,
+    updatePartnerResc:updatePartnerResc,
     updatePartner: updatePartner,
     numberPartner: numberPartner,
     checkOutPartner: checkOutPartner,
     numberTotalPerDate: numberTotalPerDate,
+    readPartnerCC: readPartnerCC,
 };
