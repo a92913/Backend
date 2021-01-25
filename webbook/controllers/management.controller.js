@@ -218,34 +218,7 @@ function updatePassword(req, res) {
     }
 }
 
-//alterar foto de perfil
-/*function updateAvatar(req, res) {
-const idOperational = req.sanitize('id_operational').escape();
-const avatar = localStorage.getItem("foto");
-console.log(avatar);
-    const errors = req.validationErrors();
-    if (errors) {
-        res.send(errors);
-        return;
-    }
-    else {
-        if (idOperational != "NULL" && typeof(idOperational) != 'undefined') {
-            const update = [avatar, idOperational];
-            const query = connect.con.query('UPDATE management SET avatar=? WHERE id_operational=?', update, function(err, rows, fields) {
-                console.log(query.sql);
-                if (!err) {
-                    res.status(jsonMessages.db.successUpdate.status).send(jsonMessages.db.successUpdate);
-                }
-                else {
-                    console.log(err);
-                    res.status(jsonMessages.db.dbError.status).send(jsonMessages.db.dbError);
-                }
-            });
-        }
-        else
-            res.status(jsonMessages.db.requiredData.status).send(jsonMessages.db.requiredData);
-    }
-}*/
+
 
 module.exports = {
     readManagement: readManagement,

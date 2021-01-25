@@ -1,4 +1,3 @@
-
 const controllerPartner = require('../controllers/partner.controller.js');
 const controllerOperational = require('../controllers/operational.controller.js');
 const controllerRequest = require('../controllers/request.controller.js');
@@ -13,7 +12,7 @@ const jsonMessages = __dirname + "/../assets/jsonMessages/";
 
 const app = require('../server');
 
-app.get('/', function(req,res){
+app.get('/', function(req, res) {
     res.send('FIRE!');
 });
 
@@ -39,7 +38,6 @@ app.get('/operationalsPhone/:phone', controllerOperational.readOperationalPhone)
 app.get('/operationalsCc/:cc', controllerOperational.readOperationalCc);
 app.get('/numberOperationals/', controllerOperational.numberOperationals);
 app.get('/numberPerDateOperationals/:date', controllerOperational.numberTotalPerDate);
-app.put('/operationalsAvatar/:id_operational', controllerOperational.updateAvatar);
 
 //occurence routes
 app.get('/occurrences/:id', controllerOccurrence.readOccurrenceID);
@@ -53,7 +51,7 @@ app.get('/numberOccTotal/', controllerOccurrence.numberOccTotal);
 app.get('/requests/', controllerRequest.readRequest);
 app.get('/requests/:id', controllerRequest.readRequestID);
 app.post('/requests/', controllerRequest.saveRequest);
-app.post('/requeststype/',controllerRequest.saveRequestType);
+app.post('/requeststype/', controllerRequest.saveRequestType);
 app.get('/requestss/:typology', controllerRequest.readRequestByTypology);
 app.put('/requests/:id', controllerRequest.updateRequest);
 app.get('/requestsPending/', controllerRequest.readRequestVerification);
@@ -122,7 +120,8 @@ function isLoggedIn(req, res, next) {
         return next();
     }
     else {
-          res.status(jsonMessages.login.unauthorized.status).send(jsonMessages.login.unauthorized);
+        res.status(jsonMessages.login.unauthorized.status).send(jsonMessages.login.unauthorized);
         return next();
     }
 }
+
