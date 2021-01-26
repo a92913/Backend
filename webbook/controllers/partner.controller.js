@@ -255,7 +255,7 @@ function checkOutPartner(req, res) {
 function numberTotalPerDate(req, res) {
     const date = req.param("date");
     const post = [date, date];
-    const query = connect.con.query('SELECT COUNT(*) FROM partner WHERE (checkout_date is NULL or checkout_date > ?) AND registration_date <?', post, function(err, rows, fields) {
+    const query = connect.con.query('SELECT COUNT(*) FROM partner WHERE (checkout_date = "1111-01-01" or checkout_date > ?) AND registration_date <?', post, function(err, rows, fields) {
         console.log(query.sql);
         if (err) {
             console.log(err);
